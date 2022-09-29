@@ -1,0 +1,81 @@
+<div class="modal-body quickView">
+    <link rel="stylesheet" href="/content/css/product-view.min.css" />
+    <div class="productView">                
+
+        <section>
+            <div class="productView-options1">                
+                <form
+                    class="form"
+                    method="post"
+                    action="{{product.cart_url}}"
+                    enctype="multipart/form-data"
+                    data-cart-item-add
+                >
+                    <input type="hidden" name="action" value="add" />
+                    <input
+                        type="hidden"
+                        name="product_id"
+                        value="{{product.id}}"
+                    />
+                    {{#each product.customizations}} 
+                        {{{dynamicComponent 'components/products/customizations'}}} 
+                    {{/each}}
+                    <div data-product-option-change style="display: none">
+                        {{#each product.options}}                             
+                            {{#contains display_name 'Policy'}}
+                                <div style="display: none;">
+                                    {{{dynamicComponent 'components/products/options'}}}
+                                </div>
+                                {{#contains type 'Checkbox'}}
+                                <script>                                    
+                                    document.querySelector("#attribute-{{id}}").checked=true;
+                                </script>
+                                {{/contains}}
+                            {{else}}
+                                {{{dynamicComponent 'components/products/options'}}}
+                            {{/contains}}                            
+                        {{/each}}
+                    </div>
+
+                    {{#if product.can_purchase}} 
+                        {{>components/products/add-to-cart}} 
+                    {{else}} 
+                        {{#if product.out_of_stock}} 
+                            {{#if product.out_of_stock_message}}
+                                {{> components/common/alert-error product.out_of_stock_message}} 
+                            {{else}} 
+                                {{>components/common/alert-error (lang 'products.sold_out')}}
+                            {{/if}} 
+                        {{/if}}
+
+                        <div class="form-action button--not-purchase-wrap">
+                            <input
+                                class="button button--primary"
+                                type="button"
+                                value="{{lang 'products.add_to_cart'}}"
+                                disabled
+                            />
+                        </div>
+
+                    {{/if}}
+
+                </form>
+                {{inject "product_id" product.id}}
+                <script src="/content/js/product-view.us.js" defer></script>                
+            </div>
+        </section>
+    </div>
+
+    <div id="previewModal1" class="modal modal--large modal--preview" data-reveal>
+        <a
+            href="#"
+            class="modal-close"
+            aria-label="{{lang 'common.close'}}"
+            role="button"
+        >
+            <span aria-hidden="true">&#215;</span>
+        </a>
+        <div class="modal-content"></div>
+        <div class="loadingOverlay"></div>
+    </div>
+</div>
